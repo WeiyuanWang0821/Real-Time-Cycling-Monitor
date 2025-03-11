@@ -3,9 +3,9 @@
 
 #include <QObject>
 
-#include <QThread>//线程头文件
-#include <QDebug>//调试头文件
-//串口头文件
+#include <QThread>
+#include <QDebug>
+
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
@@ -25,7 +25,7 @@ signals:
 
 private:
     bool isSerialPortThreadFlag = false;
-    QSerialPort *pSerialPort;  //串口对象
+    QSerialPort *pSerialPort;  
     int mInspiredVolume;
     int mExpiredVolume;
 
