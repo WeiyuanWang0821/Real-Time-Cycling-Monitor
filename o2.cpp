@@ -12,21 +12,19 @@ bool O2::initO2(void)
     return O2::openSerialPort();
 }
 
-//串口打开函数
 bool O2::openSerialPort()
 {
-    if(pSerialPort->isOpen())//读取串口当前状态
+    if(pSerialPort->isOpen())
     {
         qDebug()<<"The serial port is enabled,";
         return true;
     }
-    //对串口对象进行设置
-    pSerialPort->setPortName("ttyAMA0");//设置串口名
-    pSerialPort->setBaudRate(9600);//设置波特率
-    pSerialPort->setDataBits(QSerialPort::Data8);//设置数据位
-    pSerialPort->setParity(QSerialPort::NoParity);//设置校验位
-    pSerialPort->setStopBits(QSerialPort::OneStop);//设置停止位
-    bool ret = pSerialPort->open(QIODevice::ReadWrite);//打开串口
+    pSerialPort->setPortName("ttyAMA0");
+    pSerialPort->setBaudRate(9600);
+    pSerialPort->setDataBits(QSerialPort::Data8);
+    pSerialPort->setParity(QSerialPort::NoParity);
+    pSerialPort->setStopBits(QSerialPort::OneStop);
+    bool ret = pSerialPort->open(QIODevice::ReadWrite);
     if(ret == true)
     {
         qDebug()<<"Serial port successfully opened";
@@ -39,11 +37,10 @@ bool O2::openSerialPort()
     }
 }
 
-//发送串口数据
 void O2::sendSerialPortData(void)
 {
     //qDebug()<<"sendSerialPortData:"<<QByteArray::fromHex(QString("FF018600000000007900").toUtf8());
-    pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));//读取气体浓度值
+    pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));
     pSerialPort->waitForBytesWritten(0);
     pSerialPort->waitForReadyRead(5);
 }
@@ -63,7 +60,7 @@ char O2::getCheckSum(char *packet)
 
 void O2::readSerialPortData(float *O2C)
 {
-    pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));//读取气体浓度值
+    pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));
     pSerialPort->waitForBytesWritten(0);
     bool ret = pSerialPort->waitForReadyRead();
     if(ret == true)
@@ -84,6 +81,6 @@ void O2::readSerialPortData(float *O2C)
           }
         }
     }
-    pSerialPort->clear();//清除接收的数据
+    pSerialPort->clear();
 }
 
