@@ -1,13 +1,13 @@
 /**************************************************************************************************
  * File: sfm3300.h
  * Description: This header file contains the class definition and function prototypes for 
- *              interfacing with the Sensirion SFM3300 flow sensor using the I?C protocol.
+ *              interfacing with the Sensirion SFM3300 flow sensor using the I2C protocol.
  *
  * Sensor: Sensirion SFM3300 Series
  * Features:
  *   - Measures gas flow with high accuracy
- *   - Pre-calibrated for air, O?, and N?
- *   - Digital I?C interface for easy integration
+ *   - Pre-calibrated for air, O2
+ *   - Digital I2C interface for easy integration
  *   - Fast response time
  *   - Low pressure drop
  *
