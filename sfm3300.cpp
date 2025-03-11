@@ -1,13 +1,13 @@
 /**************************************************************************************************
  * File: sfm3300.cpp
  * Description: This file implements the communication and data processing functions for the 
- *              Sensirion SFM3300 flow sensor using the I?C protocol.
+ *              Sensirion SFM3300 flow sensor using the I2C protocol.
  *
  * Sensor: Sensirion SFM3300 Series
  * Features:
  *   - Measures gas flow with high accuracy
- *   - Pre-calibrated for air, O?, and N?
- *   - Digital I?C interface for easy integration
+ *   - Pre-calibrated for air, O2
+ *   - Digital I2C interface for easy integration
  *   - Fast response time
  *   - Low pressure drop
  *
