@@ -10,11 +10,11 @@
 O2::O2(QObject *parent)
     : QObject{parent}
 {
-    qDebug()<<"O2线程号"<<QThread::currentThreadId();
+    qDebug()<<"O2 thread number"<<QThread::currentThreadId();
     pSerialPort = new QSerialPort(this);
     if(openSerialPort())
     {
-        //连接接收信息槽
+        //Connection to Receive Message Slot
         connect(pSerialPort, &QSerialPort::readyRead, [=]() {
             readSerialPortData(&mO2C);
             if(mO2C > 10 && mO2C < 21)
@@ -66,18 +66,18 @@ void O2::runO2ThreadFun(bool isFlag)
     {
         if(isFlag) {
             pTimer->start(100);
-            //qDebug()<<"启动O2定时器"<<QThread::currentThreadId();
+            //qDebug()<<"Start O2 timer"<<QThread::currentThreadId();
         }
         else {
             pTimer->stop();
-            //qDebug()<<"停止O2定时器"<<QThread::currentThreadId();
+            //qDebug()<<"Stop O2 Timer"<<QThread::currentThreadId();
         }
     }
 }
 // Called every timer interval
 void O2::onO2Timeout()
 {
-    //qDebug()<<"onO2Timeout线程号"<<QThread::currentThreadId();
+    //qDebug()<<"onO2Timeout thread number"<<QThread::currentThreadId();
     runCount ++ ;
     sendSerialPortData();
 }
@@ -88,10 +88,10 @@ bool O2::openSerialPort()
 {
     if(pSerialPort->isOpen()) // Check if already open
     {
-        qDebug()<<"串口状态已打开,";
+        qDebug()<<"Serial port status is on,";
         return true;
     }
-    //对串口对象进行设置
+    //Setting up the serial port object
     pSerialPort->setPortName("ttyAMA0");              // Port name
     pSerialPort->setBaudRate(9600);                   // Baud rate
     pSerialPort->setDataBits(QSerialPort::Data8);     // Data bits
@@ -100,12 +100,12 @@ bool O2::openSerialPort()
     bool ret = pSerialPort->open(QIODevice::ReadWrite); // Open port
     if(ret == true)
     {
-        qDebug()<<"串口打开成功";
+        qDebug()<<"Serial port opened successfully";
         return ret;
     }
     else
     {
-        qDebug()<<"串口打开失败"<<pSerialPort->errorString();
+        qDebug()<<"Failed to open serial port"<<pSerialPort->errorString();
         return ret;
     }
 }
@@ -144,13 +144,13 @@ void O2::readSerialPortData(float *O2C)
           int ret1 = (read_msg.at(3)*256+read_msg.at(4));
           if(ret1 > 250 || ret1 < 100)
           {
-            qDebug()<<"O2浓度异常："<<ret1;
+            qDebug()<<"Abnormal O2 concentration："<<ret1;
           }
           else
           {
 
             *O2C = ret1 / 10.0;
-            //qDebug()<<"O2浓度="<< *O2C <<"%";
+            //qDebug()<<"O2 concentration ="<< *O2C <<"%";
           }
         }
     }
