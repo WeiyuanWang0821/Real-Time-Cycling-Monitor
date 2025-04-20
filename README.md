@@ -1,0 +1,1 @@
+My Vélo Mate is a real-time physiological monitoring system for cycling, built on Qt and Raspberry Pi. It features multithreaded sensor integration, event-driven data updates, and dynamic visualizations for O₂, CO₂, VO₂, and flow.
