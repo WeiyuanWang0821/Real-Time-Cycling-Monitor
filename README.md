@@ -11,7 +11,7 @@ This project integrates **three sensors**, all connected to the Raspberry Pi via
 
 | Sensor        | Model       | Description                                  | Manufacturer             |
 |---------------|-------------|----------------------------------------------|--------------------------|
-| O₂ Sensor     | *To be filled by you* | Measures oxygen concentration (%)         | *e.g., Winsen ZE25-O2*   |
+| O₂ Sensor     | 4MZ-HH | Measures oxygen concentration (%)         | *e.g., Winsen ZE25-O2*   |
 | CO₂ Sensor    | **Sensirion SCD4x** | Compact digital CO₂ and temperature sensor | [Sensirion SCD4x Datasheet](https://www.sensirion.com/en/environmental-sensors/gas-sensors/carbon-dioxide-sensors-co2/scd4x/) |
 | Flow Sensor   | **Sensirion SFM3300** | Measures respiratory gas flow in L/min     | [Sensirion SFM3300 Datasheet](https://www.sensirion.com/en/flow-sensors/flow-sensors-for-gas/sfm3300/)
 
