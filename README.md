@@ -1,7 +1,5 @@
 # 🚴 My Vélo Mate – Real-Time Cycling Monitor
 
-# 🚴 My Vélo Mate – Real-Time Cycling Monitor
-
 Commercial physiological monitoring systems for exercise testing are often **expensive, complex, or inaccessible for student research and DIY sports science**. In particular, **portable real-time VO₂ monitoring** is rare and typically requires proprietary equipment.
 
 🧠 **My Vélo Mate** addresses this gap by providing a **low-cost, Raspberry Pi-based solution** capable of tracking:
