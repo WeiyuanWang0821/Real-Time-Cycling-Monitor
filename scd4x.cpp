@@ -12,7 +12,7 @@ SCD4X::SCD4X(QObject *parent)
 {
    if(SCD4X_Init())
    {
-        qDebug()<<"SCD4X_Init成功";
+        qDebug()<<"SCD4X_Init successes";
         pTimer = new QTimer(this);
         // Connect timer to data collection slot
         connect(pTimer, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout);
@@ -23,7 +23,7 @@ SCD4X::SCD4X(QObject *parent)
         connect(pTimer1, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout1);
    }
    else {
-       qDebug()<<"SCD4X_Init失败";
+       qDebug()<<"SCD4X_Init fail";
    }
 
 }
@@ -145,7 +145,7 @@ bool SCD4X::SCD4X_ReadCommand(uint8_t* reg_addr, uint16_t* rev_data, uint8_t len
     //获取值
     ret = read(SCD4XID , redata ,redata_len);
     if (ret == -1){
-        qDebug() << "获取值失败";
+        qDebug() << "Failed to get value";
         return false;
     }
     else{
@@ -294,7 +294,7 @@ read sensor output and convert.
 ****************************************************************************************************************/
 bool SCD4X::SCD4X_ReadMeasurement(uint16_t* co2, int32_t* temperature, int32_t* humidity)
 {
-    QMutexLocker locker(&mMutex); // 自动锁定和解锁
+    QMutexLocker locker(&mMutex); // Automatic locking and unlocking
     if (!SCD4X_GetDataReadyStatus())
         return false;
     uint16_t buf[3] = { 0 };
@@ -306,7 +306,7 @@ bool SCD4X::SCD4X_ReadMeasurement(uint16_t* co2, int32_t* temperature, int32_t* 
         return false;
 
     *co2 = buf[0];
-    //qDebug() << "co2浓度 = "<<*co2;
+    //qDebug() << "co2 concentration = "<<*co2;
     *temperature = ((21875 * (int32_t)buf[1]) >> 13) - 45000;
     *humidity = ((12500 * (int32_t)buf[2]) >> 13);
     return true;
@@ -561,13 +561,13 @@ bool SCD4X::SCD4X_Init(void)
 
     SCD4XID = open("/dev/i2c-1", O_RDWR);
     if (SCD4XID < 0) {
-        qDebug() << "无法打开I2C总线:" << SCD4XID;
+        qDebug() << "Unable to open I2C bus." << SCD4XID;
         return false;
     }
     qDebug() << "SCD4XID:" << SCD4XID;
 
     if (ioctl(SCD4XID, I2C_SLAVE, 0x62) < 0) {
-        qDebug() << "无法设置I2C设备地址:" << static_cast<int>(0x62);
+        qDebug() << "Unable to set I2C device address." << static_cast<int>(0x62);
         close(SCD4XID);
         SCD4XID = -1;
         return false;
