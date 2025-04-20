@@ -14,7 +14,7 @@ This project integrates **three sensors**, all connected to the Raspberry Pi via
 | Sensor        | Model       | Description                                  | Manufacturer             |
 |---------------|-------------|----------------------------------------------|--------------------------|
 | O₂ Sensor     | **4MZ-HH**  | Measures oxygen concentration (%)         | 河南华深科智能科技有限公司  |
-| CO₂ Sensor    | **Sensirion SCD4x** | Measures CO₂ concentration (%)| [[Sensirion SCD4x Datasheet](https://www.sensirion.com/en/environmental-sensors/gas-sensors/carbon-dioxide-sensors-co2/scd4x/)](https://developer.sensirion.com/product-support/scd4x-co2-sensor) |
+| CO₂ Sensor    | **Sensirion SCD4x** | Measures CO₂ concentration (%)| [[Sensirion SCD4x Datasheet](https://developer.sensirion.com/product-support/scd4x-co2-sensor)] |
 | Flow Sensor   | **Sensirion SFM3300** | Measures respiratory gas flow in L/min     | [Sensirion SFM3300 Datasheet](https://sensirion.com/products/catalog/SFM3300-D)
 
 > All sensors communicate over the Raspberry Pi’s I²C bus.
