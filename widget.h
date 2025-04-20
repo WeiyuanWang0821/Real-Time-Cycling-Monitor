@@ -1,10 +1,17 @@
+////////////////////////////////////////
+// File: widget.h
+// Description: Header for the main Qt widget class used in real-time physiological monitoring.
+//              Manages multithreaded sensor data (O2, CO2, flow), interactive plotting,
+//              chart rendering, and GUI control elements.
+////////////////////////////////////////
+
 #ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
 #include <QSerialPort>
 #include <QSerialPortInfo>
-#include <QtCharts>//图表
+#include <QtCharts>// For plotting charts
 
 #include <QThread>
 #include <wiringPi.h>
@@ -18,11 +25,12 @@
 #include <QDateTime>
 #include <QLegend>
 
-#include "o2.h"//线程
-#include "scd4x.h"//线程
-#include "sfm3300.h"//线程
+#include "o2.h"         // O2 sensor thread
+#include "scd4x.h"      // CO2 sensor thread
+#include "sfm3300.h"    // Flow sensor thread
 
-//曲线结构体
+
+// Data series structure for chart curves
 struct m_SeriesStruct {
     QSplineSeries *O2C = nullptr;
     QSplineSeries *CO2C = nullptr;
@@ -34,7 +42,7 @@ struct m_SeriesStruct {
 
     int VO2MAX = 0;
     int StartPauseStopFalg = 0;
-    int Time = 1000;//采集间隔ms
+    int Time = 1000;// Sampling interval (ms)
 };
 
 
@@ -97,15 +105,18 @@ private slots:
 
 private:
     Ui::Widget *ui;
-
-    O2 *pO2 = nullptr;//线程指针
-    SFM3300 *pSFM3300 = nullptr;//线程指针
-    SCD4X *pSCD4X = nullptr;//线程指针
-
+    
+    // Sensor worker pointers
+    O2 *pO2 = nullptr;
+    SFM3300 *pSFM3300 = nullptr;
+    SCD4X *pSCD4X = nullptr;
+    
+    // Threads
     QThread *pThread1 = nullptr;
     QThread *pThread2 = nullptr;
     QThread *pThread3 = nullptr;
 
+    // Chart series manager
     m_SeriesStruct m_Series;
 
     QChart *pChart = nullptr;
@@ -121,9 +132,9 @@ private:
     QDateTime mStartTime;
     QDateTime mCurrentTime;
 
-    float mO2CI = 0,mCO2CI = 0;
-    float mO2C = 0,mCO2C = 0,mGasFlow = 0;
-    float mVO2 = 0,mVCO2 = 0,mRER = 0;
+    float mO2CI = 0, mCO2CI = 0;             // Calibration values
+    float mO2C = 0, mCO2C = 0, mGasFlow = 0; // Raw sensor values
+    float mVO2 = 0, mVCO2 = 0, mRER = 0;
     float mVO2Z[60*20] = {0};
     float mVCO2Z[60*20] = {0};
     float mVO2MAX = 0;

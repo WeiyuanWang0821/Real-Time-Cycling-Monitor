@@ -1,10 +1,16 @@
+########################################
+# File: exp3.pro
+# Description: Qt project configuration file for a GUI app
+#              Includes serial communication, chart plotting,
+#              and external sensor libraries 
+########################################
 QT       += core gui serialport charts printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-#库文件和路径加载
+# Load libraries and include paths
 LIBS += -lwiringPi
 INCLUDEPATH += /usr/local/include
 LIBS += -L/usr/local/lib

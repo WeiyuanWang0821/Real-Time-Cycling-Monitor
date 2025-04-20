@@ -1,15 +1,22 @@
+////////////////////////////////////////
+// File: scd4x.h
+// Description: Header for SCD4X CO₂, temperature, and humidity sensor interface.
+//              Defines I²C commands, CRC mechanism, data acquisition and calibration API.
+//              Includes Qt timer/event-driven support and sensor communication logic.
+////////////////////////////////////////
+
 #ifndef SCD4X_H
 #define SCD4X_H
 
 #include <QObject>
 #include <QTimer>
-#include <QThread>//线程头文件
+#include <QThread>      // Thread support
 #include <QMutex>
-#include <QDebug>//调试头文件
+#include <QDebug>       // Debugging
 #include <iostream>
-#include <cstdint>  // 引入uint16_t和int16_t
+#include <cstdint>      // For uint16_t and int16_t
 #include <math.h>
-#include <cstdlib> // 用于 malloc 和 free
+#include <cstdlib>      // For malloc and free
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>

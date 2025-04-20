@@ -1,3 +1,10 @@
+////////////////////////////////////////
+// File: scd4x.cpp
+// Description: SCD4X sensor handler for CO₂, temperature, and humidity.
+//              Uses I²C protocol with Qt timers and event-driven data handling.
+//              Implements filtering, CRC checks, and sensor configuration APIs.
+////////////////////////////////////////
+
 #include "scd4x.h"
 
 SCD4X::SCD4X(QObject *parent)
@@ -5,16 +12,15 @@ SCD4X::SCD4X(QObject *parent)
 {
    if(SCD4X_Init())
    {
-       qDebug()<<"SCD4X_Init成功";
-       pTimer = new QTimer(this);
-       // 设置定时器超时信号连接到槽函数
-       connect(pTimer, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout);
+        qDebug()<<"SCD4X_Init成功";
+        pTimer = new QTimer(this);
+        // Connect timer to data collection slot
+        connect(pTimer, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout);
 
-       SCD4X_StartPeriodicMeasurement(); //需要等待5S
-       pTimer1 = new QTimer(this);
-       // 设置定时器超时信号连接到槽函数
-       connect(pTimer1, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout1);
-       pTimer1->start(5000);
+        SCD4X_StartPeriodicMeasurement(); // Requires 5s wait
+        pTimer1 = new QTimer(this);
+        // Connect initialization wait timer
+        connect(pTimer1, &QTimer::timeout, this, &SCD4X::onSCD4XTimeout1);
    }
    else {
        qDebug()<<"SCD4X_Init失败";
@@ -38,7 +44,7 @@ SCD4X::~SCD4X()
     }
 }
 
-//线程处理函数
+// Thread function to start or stop timer
 void SCD4X::runSCD4XThreadFun(bool isFlag)
 {
     if (pTimer)
@@ -51,7 +57,7 @@ void SCD4X::runSCD4XThreadFun(bool isFlag)
         }
     }
 }
-
+// Timer-driven measurement and aggregation
 void SCD4X::onSCD4XTimeout()
 {
     if(isSCD4XFlag) {
@@ -62,13 +68,13 @@ void SCD4X::onSCD4XTimeout()
             mCO2CCount++;
             mCO2CSum +=mCO2C;
         }
-        if(runCount > 10)//每秒统计一次数据
+        if(runCount > 10)// Once per second
         {
             float mCO2CTemp = 0;
             runCount = 0;
             if(mCO2CCount > 0)
             {
-                mCO2CTemp = mCO2CSum / mCO2CCount / 100.0;
+                mCO2CTemp = mCO2CSum / mCO2CCount / 10000.0;
                 mCO2CSum = 0;
                 mCO2CCount = 0;
             }
@@ -80,7 +86,7 @@ void SCD4X::onSCD4XTimeout()
     else
     {
         runCount ++ ;
-        if(runCount > 10)//每秒统计一次数据
+        if(runCount > 10)// Once per second
         {
             runCount= 0;
             emit signalsSCD4XData(0);
@@ -126,16 +132,16 @@ bool SCD4X::SCD4X_ReadCommand(uint8_t* reg_addr, uint16_t* rev_data, uint8_t len
     uint8_t redata_len = length * 3;
     uint8_t* redata = (uint8_t*)malloc(length * 3 + 1);
     int ret = -1 ;
-    QThread::msleep(5); // 等待5ms一次数据
+    QThread::msleep(5); // Wait 5ms between operations
     ret = write (SCD4XID, reg_addr , 3);
     if (ret == -1){
-        qDebug() << "SCD4XID 命令写入失败";
+        qDebug() << "SCD4XID command wtite failed";
         return false;
     }
     else{
-        //qDebug() << "SCD4XID 命令写入成功";
+        // qDebug() << "SCD4XID command write succeeded";
     }
-    QThread::msleep(5); // 等待5ms一次数据
+    QThread::msleep(5); // Wait 5ms between operations
     //获取值
     ret = read(SCD4XID , redata ,redata_len);
     if (ret == -1){
@@ -175,11 +181,11 @@ void SCD4X::SCD4X_WriteCommand(uint8_t* send_data, uint8_t length)
 
     ret = write (SCD4XID, send_data , length);
     if (ret == -1){
-        qDebug() << "SCD4XID 命令写入失败";
+        qDebug() << "SCD4XID command read fialed";
         return;
     }
     else{
-    // qDebug() << "SCD4XID 命令写入成功";
+    // qDebug() << "SCD4XID command read success";
     }
 }
 

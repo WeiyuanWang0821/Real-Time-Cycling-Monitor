@@ -1,7 +1,12 @@
+////////////////////////////////////////
+// File: widget.cpp
+// Description: Main Qt widget for real-time physiological data display.
+//              Integrates O2, CO2, and flow sensors via multithreading.
+//              Provides dynamic chart plotting and table interface.
+////////////////////////////////////////
+
 #include "widget.h"
 #include "ui_widget.h"
-
-
 
 
 Widget::Widget(QWidget *parent)
@@ -10,21 +15,23 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    //O2线程初始化
-    pO2 = new O2;//动态线程分配空间，不能指定父对象
-    pThread1 =new QThread(this);//创建子线程
-    pO2->moveToThread(pThread1);//把自定义的线程加入到子线程中
-    connect(pO2,&O2::signalsO2Data ,this,&Widget::dealO2Fun);//连接线程信号与主线程处理函数
-    connect(this,&Widget::startO2Thread,pO2,&O2::runO2ThreadFun);//连接主线程启动子线程
+    // Initialize O2 sensor thread
+    pO2 = new O2;                             // Allocate sensor handler
+    pThread1 = new QThread(this);             // Create worker thread
+    pO2->moveToThread(pThread1);              // Move handler to thread
+    connect(pO2, &O2::signalsO2Data,
+            this, &Widget::dealO2Fun);       // Sensor data -> handler
+    connect(this, &Widget::startO2Thread,
+            pO2, &O2::runO2ThreadFun);       // Start/stop signal
 
-    //SFM3300线程初始化
+    // Initialize SFM3300 sensor thread
     pSFM3300 = new SFM3300;//动态线程分配空间，不能指定父对象
     pThread2 =new QThread(this);//创建子线程
     pSFM3300->moveToThread(pThread2);//把自定义的线程加入到子线程中
     connect(pSFM3300,&SFM3300::signalsSFM3300Data ,this,&Widget::dealSFM3300Fun);//连接线程信号与主线程处理函数
     connect(this,&Widget::startSFM3300Thread,pSFM3300,&SFM3300::runSFM3300ThreadFun);//连接主线程启动子线程
 
-    //SCD4X线程初始化
+    // Initialize SCD4X sensor thread
     pSCD4X = new SCD4X;//动态线程分配空间，不能指定父对象
     pThread3 =new QThread(this);//创建子线程
     pSCD4X->moveToThread(pThread3);//把自定义的线程加入到子线程中
@@ -32,34 +39,34 @@ Widget::Widget(QWidget *parent)
     connect(this,&Widget::startSCD4XThread,pSCD4X,&SCD4X::runSCD4XThreadFun);//连接主线程启动子线程
 
 
-
+    // Get UI slider values
     mXCount = ui->horizontalSliderX->value();
     ui->lineEditX->setText(QString::number(mXCount));
     mYLCount = ui->verticalSliderYL->value();
     mYRCount = ui->verticalSliderYR->value();
 
     QFont legendFont;
-    legendFont.setPointSize(11);  // 设置字体大小为 11
+    legendFont.setPointSize(11);              // Legend font size
 
-    m_Series.Time =1000;//采集间隔1000ms
-
-    m_Series.O2C = new QSplineSeries();// 创建曲线
-    m_Series.CO2C = new QSplineSeries();// 创建曲线
-    m_Series.GF = new QSplineSeries();// 创建曲线
-    m_Series.VCO2 = new QSplineSeries();// 创建曲线
-    m_Series.VO2 = new QSplineSeries();// 创建曲线
-    m_Series.RER = new QSplineSeries();// 创建曲线
-    m_Series.VE = new QSplineSeries();// 创建曲线
-
-    pChart = new QChart();// 创建图表
-    pChart->setTitle("");// 设置标题
-
-    // 设置图例字体大小
+    m_Series.Time = 1000;                     // Data interval (ms)
+    
+    // Create chart series
+    m_Series.O2C = new QSplineSeries();
+    m_Series.CO2C = new QSplineSeries();
+    m_Series.GF = new QSplineSeries();
+    m_Series.VCO2 = new QSplineSeries();
+    m_Series.VO2 = new QSplineSeries(); 
+    m_Series.RER = new QSplineSeries();
+    m_Series.VE = new QSplineSeries();
+    
+    // Setup chart
+    pChart = new QChart();
+    pChart->setTitle("");
     legendFont = pChart->legend()->font();
     legendFont.setPointSize(11);  // 设置字体大小为 11
     pChart->legend()->setFont(legendFont);
 
-    // 设置 X 轴为时间（秒）
+    // Configure X Axis (Time)
     pTimeAxis = new QDateTimeAxis();
     //pTimeAxis->setTitleText("Time");
     pTimeAxis->setFormat("HH:mm:ss");  // 设置时间格式为时分秒
@@ -73,7 +80,7 @@ Widget::Widget(QWidget *parent)
     pTimeAxis->setLabelsFont(font);  // 应用新的字体设置
     pChart->addAxis(pTimeAxis, Qt::AlignBottom);
 
-    // 设置 Y 轴为数据值
+    // Configure Left Y Axis
     pDataAxis = new QValueAxis();
     pDataAxis->setTitleText("GF/VO2/VCO2/VE");
     pDataAxis->setLabelsAngle(90);
@@ -82,7 +89,8 @@ Widget::Widget(QWidget *parent)
     pDataAxis->setLabelsFont(font);// 应用新的字体设置
     pChart->addAxis(pDataAxis, Qt::AlignLeft);
     pDataAxis->setRange(0, mYLCount); // 设置范围 0 - 1000
-
+    
+    // Configure Right Y Axis
     pDataAxis1 = new QValueAxis();
     pDataAxis1->setTitleText("O2C/CO2C");
     pDataAxis1->setLabelsAngle(90);
@@ -92,26 +100,25 @@ Widget::Widget(QWidget *parent)
     pDataAxis1->setRange(0, mYRCount); // 设置范围 0 - 100
     pChart->addAxis(pDataAxis1, Qt::AlignRight);
 
-    // 创建图表视图并设置图表
+    // Setup chart view
     pChartView = new QChartView(pChart);
     pChartView->setRenderHint(QPainter::Antialiasing);
-
     ui->scrollArea->setWidget(pChartView);// 将pChartView作为QScrollArea的内容
     ui->scrollArea->setWidgetResizable(true);// 使pChartView大小可调整，适应滚动区域大小
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);  // 始终显示水平滚动条
 
+    // Set baseline gas concentration
     ui->doubleSpinBoxO2CI->setValue(21);
     ui->doubleSpinBoxCO2CI->setValue(4);
     mO2CI =  ui->doubleSpinBoxO2CI->value();
     mCO2CI =  ui->doubleSpinBoxCO2CI->value();
 
-    // 模拟数据变化
+    // Initialize timer and data counters
     mTime = 0;
-    // 定时器
     pTimer = new QTimer(this);
     connect(pTimer, &QTimer::timeout, this, &Widget::updateData);
 
-    // 设置行数和列数
+    // Configure data table
     ui->tableWidget->setRowCount(2);  // 设置2行
     ui->tableWidget->setColumnCount(9);  // 设置8列
 
@@ -128,7 +135,7 @@ Widget::Widget(QWidget *parent)
     // 设置表格内容
      ui->tableWidget->setItem(0, 0, new QTableWidgetItem("O2C(%)"));
      ui->tableWidget->setItem(0, 1, new QTableWidgetItem("CO2C(%)"));
-     ui->tableWidget->setItem(0, 2, new QTableWidgetItem("GF(mL/S)"));
+     ui->tableWidget->setItem(0, 2, new QTableWidgetItem("GF"));
      ui->tableWidget->setItem(0, 3, new QTableWidgetItem("VO2(mL/min)"));
      ui->tableWidget->setItem(0, 4, new QTableWidgetItem("VCO2(mL/min)"));
      ui->tableWidget->setItem(0, 5, new QTableWidgetItem("RER"));
@@ -171,6 +178,8 @@ Widget::~Widget()
     delete ui;
 }
 
+
+// Compute VO2 over time window
 void Widget::getVO2(float *ret , float *o2c ,float *co2c ,float *gasflow)
 {
     mVO2Z[mTime] =(*gasflow) * ( ui->doubleSpinBoxO2CI->value()- (*o2c)) /100 ;
@@ -189,6 +198,8 @@ void Widget::getVO2(float *ret , float *o2c ,float *co2c ,float *gasflow)
     }
 }
 
+
+// Compute VCO2 over time window
 void Widget::getVCO2(float *ret ,float *o2c ,float *co2c ,float *gasflow)
 {
     mVCO2Z[mTime] = (*gasflow) * ((*co2c) - ui->doubleSpinBoxCO2CI->value()) /100 ;
@@ -207,11 +218,15 @@ void Widget::getVCO2(float *ret ,float *o2c ,float *co2c ,float *gasflow)
     }
 }
 
+
+// Compute RER
 void Widget::getRER(float *ret ,float *vo2 ,float *vco2)
 {
     *ret = (*vco2) * (*vo2);
 }
 
+
+// Compute VE (minute ventilation)
 void Widget::getVE(float *ret ,float *gasflow)
 {
     mVEZ[mTime] = (*gasflow);
@@ -230,7 +245,7 @@ void Widget::getVE(float *ret ,float *gasflow)
     }
 }
 
-//O2 传感器线程控制函数-------------------------------------------------------------------
+// O2 sensor thread control functions ------------------------------
 void Widget::startO2ThreadFun()
 {
     if(pThread1->isRunning()== true)
@@ -261,7 +276,7 @@ void Widget::dealO2Fun(float data)
     mO2C = data;
 }
 
-//SFM3300 传感器线程控制函数-------------------------------------------------------------------
+// SFM3300 sensor thread control functions ----------------------------
 void Widget::startSFM3300ThreadFun()
 {
     if(pThread2->isRunning()== true)
@@ -293,7 +308,7 @@ void Widget::dealSFM3300Fun(float data)
     mGasFlow = data;
 }
 
-//SCD4X 传感器线程控制函数-------------------------------------------------------------------
+// SCD4X sensor thread control functions ------------------------------
 void Widget::startSCD4XThreadFun()
 {
     if(pThread3->isRunning()== true)
@@ -324,22 +339,23 @@ void Widget::dealSCD4XFun(float data)
     mCO2C = data;
 }
 
-
+// Timer slot: gather and update all data every interval ---------------------------
 void Widget::updateData() {
     qDebug()<<"updateData";
-    // 数据处理
+    // Compute physiological metrics
 
     getVO2(&mVO2,&mO2C ,&mCO2C ,&mGasFlow);
     getVCO2(&mVCO2,&mO2C ,&mCO2C ,&mGasFlow);
     getRER(&mRER,&mVO2 ,&mVCO2);
     getVE(&mVE,&mGasFlow);
 
+    // Track peak VO2
     if(mVO2MAX < mVO2)
     {
         mVO2MAX = mVO2;
     }
 
-    // 每秒增加时间，数据值根据某种规则变化
+    // Update time axis range dynamically
     if(mTime > mXCount) // 动态更新横坐标范围
     {
         pTimeAxis->setRange( mStartTime.addSecs(mTime - mXCount),  mStartTime.addSecs(mTime)); // 只显示最近的10个数据点
@@ -349,6 +365,7 @@ void Widget::updateData() {
         pTimeAxis->setRange( mStartTime.addSecs(0),  mStartTime.addSecs(mXCount)); // 只显示最近的个数据点
     }
 
+    // Append new data points to each series
     m_Series.O2C->append(mStartTime.addSecs(mTime).toMSecsSinceEpoch() , mO2C );
     m_Series.CO2C->append(mStartTime.addSecs(mTime).toMSecsSinceEpoch() , mCO2C );
     m_Series.GF->append(mStartTime.addSecs(mTime).toMSecsSinceEpoch() , mGasFlow );
@@ -358,7 +375,7 @@ void Widget::updateData() {
     m_Series.VE->append(mStartTime.addSecs(mTime).toMSecsSinceEpoch() , mVE );
 
 
-    // 实时刷新表格
+    // Refresh table with formatted values
     ui->tableWidget->setItem(1, 0, new QTableWidgetItem(QString::number(mO2C, 'g' ,3)));
     ui->tableWidget->setItem(1, 1, new QTableWidgetItem(QString::number(mCO2C, 'g' ,3)));
     ui->tableWidget->setItem(1, 2, new QTableWidgetItem(QString::number(mGasFlow, 'g' ,3)));
@@ -383,9 +400,9 @@ void Widget::updateData() {
 
 
 
-void Widget::on_btnStart_clicked()//开始更新
+void Widget::on_btnStart_clicked()// Start data updates
 {
-    if(m_Series.StartPauseStopFalg != 1 )//暂停模式下不执行
+    if(m_Series.StartPauseStopFalg != 1 )// Only if not paused
     {
         m_Series.O2C->clear();
         m_Series.CO2C->clear();
@@ -397,20 +414,21 @@ void Widget::on_btnStart_clicked()//开始更新
         mTime = 0;
     }
     m_Series.StartPauseStopFalg = 0;
-    pTimer->start(m_Series.Time);  // 每秒更新一次
+    pTimer->start(m_Series.Time);  // Trigger update every interval
     startO2ThreadFun();
     startSFM3300ThreadFun();
     startSCD4XThreadFun();
 }
 
-void Widget::on_btnPause_clicked()// 暂停更新
+void Widget::on_btnPause_clicked()// Pause data updates
+{
 {
     pTimer->stop();
     m_Series.StartPauseStopFalg = 1;
 }
 
 
-void Widget::on_btnStop_clicked()// 停止更新
+void Widget::on_btnStop_clicked()// Stop data updates
 {
     pTimer->stop();
     m_Series.StartPauseStopFalg = 2;
@@ -419,7 +437,7 @@ void Widget::on_btnStop_clicked()// 停止更新
     stopSCD4XThreadFun();
 }
 
-
+// Toggle VE curve
 void Widget::on_checkBoxVE_clicked(bool checked)
 {
     if(checked == true)
@@ -436,6 +454,7 @@ void Widget::on_checkBoxVE_clicked(bool checked)
     }
 }
 
+// Toggle O2C curve
 void Widget::on_checkBoxO2C_clicked(bool checked)
 {
     if(checked == true)
@@ -452,7 +471,7 @@ void Widget::on_checkBoxO2C_clicked(bool checked)
     }
 }
 
-
+// Toggle CO2C curve
 void Widget::on_checkBoxCO2C_clicked(bool checked)
 {
     if(checked == true)
@@ -469,6 +488,7 @@ void Widget::on_checkBoxCO2C_clicked(bool checked)
     }
 }
 
+// Toggle GF curve
 void Widget::on_checkBoxGF_clicked(bool checked)
 {
     if(checked == true)
@@ -485,6 +505,7 @@ void Widget::on_checkBoxGF_clicked(bool checked)
     }
 }
 
+// Toggle VO2 curve
 void Widget::on_checkBoxVO2_clicked(bool checked)
 {
     if(checked == true)
@@ -501,7 +522,7 @@ void Widget::on_checkBoxVO2_clicked(bool checked)
     }
 }
 
-
+ // Toggle VCO2 curve
 void Widget::on_checkBoxVCO2_clicked(bool checked)
 {
     if(checked == true)
@@ -518,6 +539,7 @@ void Widget::on_checkBoxVCO2_clicked(bool checked)
     }
 }
 
+// Toggle RER curve
 void Widget::on_checkBoxRER_clicked(bool checked)
 {
     if(checked == true)
@@ -534,19 +556,19 @@ void Widget::on_checkBoxRER_clicked(bool checked)
     }
 }
 
-
+// O2 calibration input
 void Widget::on_doubleSpinBoxO2CI_valueChanged(double arg1)
 {
     mO2CI =  arg1;
 }
 
-
+// CO2 calibration input
 void Widget::on_doubleSpinBoxCO2CI_valueChanged(double arg1)
 {
     mCO2CI =  arg1;
 }
 
-
+// Adjust time window
 void Widget::on_horizontalSliderX_valueChanged(int value)
 {
    if(mXCount == value)
@@ -563,13 +585,13 @@ void Widget::on_horizontalSliderX_valueChanged(int value)
    }
 }
 
-
+// Adjust left Y-axis range
 void Widget::on_verticalSliderYL_valueChanged(int value)
 {
     pDataAxis->setRange(0, value); // 设置范围
 }
 
-
+// Adjust right Y-axis range
 void Widget::on_verticalSliderYR_valueChanged(int value)
 {
     pDataAxis1->setRange(0, value); // 设置范围

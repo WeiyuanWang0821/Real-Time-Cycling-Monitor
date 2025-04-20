@@ -1,28 +1,37 @@
+////////////////////////////////////////
+// File: sfm3300.h
+// Description: Header for SFM3300 gas flow sensor driver
+//              Defines I²C communication, sensor commands, data processing,
+//              and Qt-based timer-driven acquisition framework.
+////////////////////////////////////////
+
 #ifndef SFM3300_H
 #define SFM3300_H
 
 #include <QObject>
 #include <QTimer>
-#include <QThread>//线程头文件
+#include <QThread>      // Threading support
 #include <QMutex>
-#include <QDebug>//调试头文件
+#include <QDebug>       // Debug output
 #include <iostream>
-#include <cstdint>  // 引入uint16_t和int16_t
+#include <cstdint>      // For uint16_t and int16_t
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
 
 
-#define	SFM3300_OFFSET		32768	// 偏移量
-#define	SFM3300_FLOWCOEFF	120		// 空气的流量系数
-/* 设备命令 */
-#define SFM3300_FLOWREAD	0x1000	// 读取流量：返回2个字节
-#define SFM3300_IDREAD		0x31AE	// 读取ID号：返回4个字节
-#define SFM3300_RESET		0x2000	// 复位指令
+// Flow conversion constants
+#define SFM3300_OFFSET     32768    // Sensor offset
+#define SFM3300_FLOWCOEFF  120      // Flow coefficient for air
 
-#define SFM3300_ERROR       0
-#define SFM3300_OK          0
+// Device commands
+#define SFM3300_FLOWREAD   0x1000   // Read flow (2 bytes)
+#define SFM3300_IDREAD     0x31AE   // Read ID (4 bytes)
+#define SFM3300_RESET      0x2000   // Reset command
+
+#define SFM3300_ERROR      0
+#define SFM3300_OK         0
 
 class SFM3300 : public QObject
 {

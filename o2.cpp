@@ -1,3 +1,10 @@
+////////////////////////////////////////
+// File: o2.cpp
+// Description: Handles O₂ concentration acquisition via UART.
+//              Uses Qt event-driven callbacks and timers to 
+//              receive, filter, and average data before emitting.
+////////////////////////////////////////
+
 #include "o2.h"
 
 O2::O2(QObject *parent)
@@ -15,7 +22,7 @@ O2::O2(QObject *parent)
                 mO2CCount++;
                 mO2CSum += mO2C;
             }
-            if(runCount > 10)//每秒统计一次数据
+            if(runCount > 10)// Aggregate once per second
             {
                 runCount = 0;
                 if(mO2CCount > 0)
@@ -33,7 +40,7 @@ O2::O2(QObject *parent)
         });
 
         pTimer = new QTimer(this);
-        // 设置定时器超时信号连接到槽函数
+        // Connect timeout signal to handler
         connect(pTimer, &QTimer::timeout, this, &O2::onO2Timeout);
     }
 }
@@ -51,7 +58,7 @@ O2::~O2()
 }
 
 
-//O2的线程处理函数
+// Thread function to control timer start/stop
 void O2::runO2ThreadFun(bool isFlag)
 {
     //qDebug()<<"runO2ThreadFun线程号"<<QThread::currentThreadId();
@@ -67,6 +74,7 @@ void O2::runO2ThreadFun(bool isFlag)
         }
     }
 }
+// Called every timer interval
 void O2::onO2Timeout()
 {
     //qDebug()<<"onO2Timeout线程号"<<QThread::currentThreadId();
@@ -75,21 +83,21 @@ void O2::onO2Timeout()
 }
 
 
-//串口打开函数
+// Open and configure serial port
 bool O2::openSerialPort()
 {
-    if(pSerialPort->isOpen())//读取串口当前状态
+    if(pSerialPort->isOpen()) // Check if already open
     {
         qDebug()<<"串口状态已打开,";
         return true;
     }
     //对串口对象进行设置
-    pSerialPort->setPortName("ttyAMA0");    //设置串口名
-    pSerialPort->setBaudRate(9600);         //设置波特率
-    pSerialPort->setDataBits(QSerialPort::Data8);//设置数据位
-    pSerialPort->setParity(QSerialPort::NoParity);//设置校验位
-    pSerialPort->setStopBits(QSerialPort::OneStop);//设置停止位
-    bool ret = pSerialPort->open(QIODevice::ReadWrite);//打开串口
+    pSerialPort->setPortName("ttyAMA0");              // Port name
+    pSerialPort->setBaudRate(9600);                   // Baud rate
+    pSerialPort->setDataBits(QSerialPort::Data8);     // Data bits
+    pSerialPort->setParity(QSerialPort::NoParity);    // Parity
+    pSerialPort->setStopBits(QSerialPort::OneStop);   // Stop bits
+    bool ret = pSerialPort->open(QIODevice::ReadWrite); // Open port
     if(ret == true)
     {
         qDebug()<<"串口打开成功";
@@ -102,7 +110,7 @@ bool O2::openSerialPort()
     }
 }
 
-//发送串口数据
+// Send data request via serial
 void O2::sendSerialPortData(void)
 {
     if(pSerialPort != nullptr)
@@ -113,7 +121,7 @@ void O2::sendSerialPortData(void)
     }
 }
 
-
+// Calculate checksum for validation
 char O2::getCheckSum(char *packet)
 {
     char i,checksum;
@@ -125,7 +133,7 @@ char O2::getCheckSum(char *packet)
     checksum += 1;
     return checksum;
 }
-
+// Read and decode serial data
 void O2::readSerialPortData(float *O2C)
 {
     QByteArray read_msg = pSerialPort->readAll();
@@ -146,6 +154,6 @@ void O2::readSerialPortData(float *O2C)
           }
         }
     }
-    pSerialPort->clear();//清除接收的数据
+    pSerialPort->clear();// Clear buffer
 }
 
