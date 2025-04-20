@@ -3,6 +3,8 @@
 **My Vélo Mate** is a real-time physiological monitoring system built on Raspberry Pi using Qt. It continuously tracks O₂ concentration, CO₂ levels, and respiratory flow during cycling. Featuring multithreaded architecture and event-driven callbacks, it supports live charting, metric calculations (VO₂, VCO₂, RER, VE), and dynamic table updates in an intuitive UI.
 ![b2c25b8988cba07ec1ac36a61ceb0e3](https://github.com/user-attachments/assets/2457a850-d32a-4dd5-8b57-11033a4bb3f3)
 
+![13248066fea9438e98f577409426173](https://github.com/user-attachments/assets/6e222c5f-bf83-4a59-8609-6934fb53f88c)
+
 ---
 
 ## 🧰 Hardware Setup
@@ -17,8 +19,17 @@ This project integrates **three sensors**, all connected to the Raspberry Pi via
 
 > All sensors communicate over the Raspberry Pi’s I²C bus.
 
+![5b8fe5eb91e8d202a55427b5660284c](https://github.com/user-attachments/assets/b1719a74-0406-4e49-b141-fbcf20c1b90c)
+
+![37e830aed028ca7777fd10ad6dc38e7](https://github.com/user-attachments/assets/47ac5727-3773-4751-96b7-ded011ab91fc)
+
+![cdd0b0c735c6dd39572c9b4d17a96bb](https://github.com/user-attachments/assets/c604281f-e51d-450f-a17e-a634e1ebed66)
+
 > 🛠️ You’ll also need a **breathing mask with a one-way valve** to ensure proper gas flow measurement.  
 > Since no suitable commercial product was available, **we designed and DIYed a custom mask** for this project.
+
+> ![Uploading 19b74c0cf433edaed9b7a299f5d20c8.png…]()
+
 ---
 
 ## 🚀 How to Reproduce This Project
