@@ -28,7 +28,8 @@ This project integrates **three sensors**, all connected to the Raspberry Pi via
 > 🛠️ You’ll also need a **breathing mask with a one-way valve** to ensure proper gas flow measurement.  
 > Since no suitable commercial product was available, **we designed and DIYed a custom mask** for this project.
 
-> ![Uploading 19b74c0cf433edaed9b7a299f5d20c8.png…]()
+![19b74c0cf433edaed9b7a299f5d20c8](https://github.com/user-attachments/assets/f57d0050-803b-434a-b251-3356e0b03ef4)
+
 
 ---
 
@@ -38,17 +39,33 @@ You can easily run the full system by following these steps:
 
 ### 1. 🔌 Connect the sensors to your Raspberry Pi
 
-We will provide a visual pinout or wiring diagram (见下图/附件)，确保以下连接完成：
+![f545e347b242b5af3ac7fd1eb3bed17](https://github.com/user-attachments/assets/bc9e7403-7c98-409d-ae2a-43eb425400ee)
 
-- **SCD4x / SFM3300 / O₂ sensor** all share the I²C SDA/SCL pins (e.g., GPIO 2/3)
-- Power via 3.3V or 5V depending on sensor spec
-- Check datasheets for exact voltage compatibility
+
+![b2b865c5b0cb84f2f6ba9c95fd3821a](https://github.com/user-attachments/assets/105d34fb-e505-444b-90ad-63f752851888)
+
+
+![7024ef1db43f815bc1572d97ff75ab7](https://github.com/user-attachments/assets/0a5f9689-8ec7-4097-8189-d29543ad513f)
+
+
+![image](https://github.com/user-attachments/assets/37526979-d9c2-42e2-b298-4c2354369a79)
+
+
+![image](https://github.com/user-attachments/assets/83194ab2-2e28-49d3-b6ee-054669ce7fed)
+
+
+![image](https://github.com/user-attachments/assets/a81637e7-9d2b-40fc-8b31-a9b5824e2108)
+
+
+![image](https://github.com/user-attachments/assets/bf269b42-eb53-4ea3-88a6-65cb734ee47a)
+
+
 
 ### 2. 📦 Download the Source Code Package
 
 We provide a `.zip` file which contains all the Qt source files. Download and unzip the package.
 
-> The release `.zip` is available in the [Releases page](https://github.com/你的仓库地址/releases).
+> The release `.zip` is available in the (https://github.com/WeiyuanWang0821/Real-Time-Cycling-Monitor/releases/tag/V1.0).
 
 ### 3. 🧱 Open in Qt Creator
 
