@@ -25,18 +25,18 @@ Widget::Widget(QWidget *parent)
             pO2, &O2::runO2ThreadFun);       // Start/stop signal
 
     // Initialize SFM3300 sensor thread
-    pSFM3300 = new SFM3300;//动态线程分配空间，不能指定父对象
-    pThread2 =new QThread(this);//创建子线程
-    pSFM3300->moveToThread(pThread2);//把自定义的线程加入到子线程中
-    connect(pSFM3300,&SFM3300::signalsSFM3300Data ,this,&Widget::dealSFM3300Fun);//连接线程信号与主线程处理函数
-    connect(this,&Widget::startSFM3300Thread,pSFM3300,&SFM3300::runSFM3300ThreadFun);//连接主线程启动子线程
+    pSFM3300 = new SFM3300;//Dynamic threads allocate space, can't specify a parent object
+    pThread2 =new QThread(this);//Creating sub-threads
+    pSFM3300->moveToThread(pThread2);//Adding custom threads to subthreads
+    connect(pSFM3300,&SFM3300::signalsSFM3300Data ,this,&Widget::dealSFM3300Fun);//Connecting thread signals with main thread handler functions
+    connect(this,&Widget::startSFM3300Thread,pSFM3300,&SFM3300::runSFM3300ThreadFun);//Connecting the main thread to start a sub-thread
 
     // Initialize SCD4X sensor thread
-    pSCD4X = new SCD4X;//动态线程分配空间，不能指定父对象
-    pThread3 =new QThread(this);//创建子线程
-    pSCD4X->moveToThread(pThread3);//把自定义的线程加入到子线程中
-    connect(pSCD4X,&SCD4X::signalsSCD4XData ,this,&Widget::dealSCD4XFun);//连接线程信号与主线程处理函数
-    connect(this,&Widget::startSCD4XThread,pSCD4X,&SCD4X::runSCD4XThreadFun);//连接主线程启动子线程
+    pSCD4X = new SCD4X;//Dynamic threads allocate space, can't specify a parent object
+    pThread3 =new QThread(this);//Creating sub-threads
+    pSCD4X->moveToThread(pThread3);//Adding custom threads to subthreads
+    connect(pSCD4X,&SCD4X::signalsSCD4XData ,this,&Widget::dealSCD4XFun);//Connecting thread signals with main thread handler functions
+    connect(this,&Widget::startSCD4XThread,pSCD4X,&SCD4X::runSCD4XThreadFun);//Connecting the main thread to start a sub-thread
 
 
     // Get UI slider values
@@ -63,49 +63,49 @@ Widget::Widget(QWidget *parent)
     pChart = new QChart();
     pChart->setTitle("");
     legendFont = pChart->legend()->font();
-    legendFont.setPointSize(11);  // 设置字体大小为 11
+    legendFont.setPointSize(11);  // Set the font size to 11
     pChart->legend()->setFont(legendFont);
 
     // Configure X Axis (Time)
     pTimeAxis = new QDateTimeAxis();
     //pTimeAxis->setTitleText("Time");
-    pTimeAxis->setFormat("HH:mm:ss");  // 设置时间格式为时分秒
+    pTimeAxis->setFormat("HH:mm:ss");  // Set the time format to hours, minutes and seconds
     mStartTime = QDateTime::fromSecsSinceEpoch(0+16*3600);//
-    pTimeAxis->setRange( mStartTime,  mStartTime.addSecs(mXCount)); // 只显示最近的mXCount个数据点
-    pTimeAxis->setLabelsAngle(60);  // 设置标签的旋转角度
-    //pTimeAxis->setTickCount(mXCount+1);// 设置坐标轴上的标签数量
-    pTimeAxis->setTickCount(11);// 设置坐标轴上的标签数量
-    QFont font = pTimeAxis->labelsFont();  // 获取当前字体
-    font.setPointSize(11);  // 设置字体大小为11
-    pTimeAxis->setLabelsFont(font);  // 应用新的字体设置
+    pTimeAxis->setRange( mStartTime,  mStartTime.addSecs(mXCount)); // Only the most recent mXCount data points are displayed.
+    pTimeAxis->setLabelsAngle(60);  // Set the rotation angle of the label
+    //pTimeAxis->setTickCount(mXCount+1);// Set the number of labels on the axis
+    pTimeAxis->setTickCount(11);// Set the number of labels on the axis
+    QFont font = pTimeAxis->labelsFont();  // Get current font
+    font.setPointSize(11);  // Set the font size to 11
+    pTimeAxis->setLabelsFont(font);  // Apply new font settings
     pChart->addAxis(pTimeAxis, Qt::AlignBottom);
 
     // Configure Left Y Axis
     pDataAxis = new QValueAxis();
     pDataAxis->setTitleText("GF/VO2/VCO2/VE");
     pDataAxis->setLabelsAngle(90);
-    font = pDataAxis->labelsFont();// 获取当前字体
-    font.setPointSize(11);// 设置字体大小为11
-    pDataAxis->setLabelsFont(font);// 应用新的字体设置
+    font = pDataAxis->labelsFont();// Get current font
+    font.setPointSize(11);// Set the font size to 11
+    pDataAxis->setLabelsFont(font);// Apply new font settings
     pChart->addAxis(pDataAxis, Qt::AlignLeft);
-    pDataAxis->setRange(0, mYLCount); // 设置范围 0 - 1000
+    pDataAxis->setRange(0, mYLCount); // Setting range 0 - 1000
     
     // Configure Right Y Axis
     pDataAxis1 = new QValueAxis();
     pDataAxis1->setTitleText("O2C/CO2C");
     pDataAxis1->setLabelsAngle(90);
-    font = pDataAxis1->labelsFont();// 获取当前字体
-    font.setPointSize(11);// 设置字体大小为11
-    pDataAxis1->setLabelsFont(font);// 应用新的字体设置
-    pDataAxis1->setRange(0, mYRCount); // 设置范围 0 - 100
+    font = pDataAxis1->labelsFont();// Get current font
+    font.setPointSize(11);// Set the font size to 11
+    pDataAxis1->setLabelsFont(font);// Apply new font settings
+    pDataAxis1->setRange(0, mYRCount); // Setting range 0 - 100
     pChart->addAxis(pDataAxis1, Qt::AlignRight);
 
     // Setup chart view
     pChartView = new QChartView(pChart);
     pChartView->setRenderHint(QPainter::Antialiasing);
-    ui->scrollArea->setWidget(pChartView);// 将pChartView作为QScrollArea的内容
-    ui->scrollArea->setWidgetResizable(true);// 使pChartView大小可调整，适应滚动区域大小
-    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);  // 始终显示水平滚动条
+    ui->scrollArea->setWidget(pChartView);// Using pChartView as the content of a QScrollArea
+    ui->scrollArea->setWidgetResizable(true);// Make pChartView resizable to fit the size of the scrolling area
+    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);  // Always show horizontal scrollbar
 
     // Set baseline gas concentration
     ui->doubleSpinBoxO2CI->setValue(21);
@@ -119,20 +119,20 @@ Widget::Widget(QWidget *parent)
     connect(pTimer, &QTimer::timeout, this, &Widget::updateData);
 
     // Configure data table
-    ui->tableWidget->setRowCount(2);  // 设置2行
-    ui->tableWidget->setColumnCount(9);  // 设置8列
+    ui->tableWidget->setRowCount(2);  // Setting 2 rows
+    ui->tableWidget->setColumnCount(9);  // Setting 8 columns
 
-    ui->tableWidget->verticalHeader()->setVisible(false);// 隐藏行序号
-    ui->tableWidget->horizontalHeader()->setVisible(false);// 隐藏列序号
+    ui->tableWidget->verticalHeader()->setVisible(false);// Hide line number
+    ui->tableWidget->horizontalHeader()->setVisible(false);// Hide column number
 
-    // 使所有列自动拉伸，均匀分配可用空间
+    // Make all columns stretch automatically to evenly distribute available space
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    // 调整行高以适应新的字体大小
+    // Adjusting line height to fit the new font size
     ui->tableWidget->resizeRowsToContents();
-    //设置容器高度
+    //Setting the container height
     ui->tableWidget->setFixedHeight(ui->tableWidget->rowHeight(0)*2.1);
 
-    // 设置表格内容
+    // Setting up form content
      ui->tableWidget->setItem(0, 0, new QTableWidgetItem("O2C(%)"));
      ui->tableWidget->setItem(0, 1, new QTableWidgetItem("CO2C(%)"));
      ui->tableWidget->setItem(0, 2, new QTableWidgetItem("GF"));
@@ -153,11 +153,11 @@ Widget::Widget(QWidget *parent)
      ui->tableWidget->setItem(1, 7, new QTableWidgetItem("0"));
      ui->tableWidget->setItem(1, 8, new QTableWidgetItem("0"));
 
-     // 设置每个单元格的内容居中
+     // Setting the content of each cell to be centered
      for (int row = 0; row < 2; ++row) {
          for (int col = 0; col <9; ++col) {
              QTableWidgetItem *item =  ui->tableWidget->item(row, col);
-             item->setTextAlignment(Qt::AlignCenter);  // 设置居中对齐
+             item->setTextAlignment(Qt::AlignCenter);  // Setting Center Alignment
          }
      }
 }
@@ -165,16 +165,16 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     stopO2ThreadFun();
-    pThread1->quit();//退出子线程
-    pThread1->wait();//回收资源
+    pThread1->quit();//Exit subthreads
+    pThread1->wait();//Recycling resources
 
     stopSFM3300ThreadFun();
-    pThread2->quit();//退出子线程
-    pThread2->wait();//回收资源
+    pThread2->quit();//Exit subthreads
+    pThread2->wait();//Recycling resources
 
     stopSCD4XThreadFun();
-    pThread3->quit();//退出子线程
-    pThread3->wait();//回收资源
+    pThread3->quit();//Exit subthreads
+    pThread3->wait();//Recycling resources
     delete ui;
 }
 
@@ -356,13 +356,13 @@ void Widget::updateData() {
     }
 
     // Update time axis range dynamically
-    if(mTime > mXCount) // 动态更新横坐标范围
+    if(mTime > mXCount) // Dynamically update the horizontal coordinate range
     {
-        pTimeAxis->setRange( mStartTime.addSecs(mTime - mXCount),  mStartTime.addSecs(mTime)); // 只显示最近的10个数据点
+        pTimeAxis->setRange( mStartTime.addSecs(mTime - mXCount),  mStartTime.addSecs(mTime)); // Only the last 10 data points are displayed
     }
     else
     {
-        pTimeAxis->setRange( mStartTime.addSecs(0),  mStartTime.addSecs(mXCount)); // 只显示最近的个数据点
+        pTimeAxis->setRange( mStartTime.addSecs(0),  mStartTime.addSecs(mXCount)); // Only the most recent data point is displayed
     }
 
     // Append new data points to each series
@@ -390,7 +390,7 @@ void Widget::updateData() {
     for (int row = 0; row < 2; ++row) {
         for (int col = 0; col <9; ++col) {
             QTableWidgetItem *item =  ui->tableWidget->item(row, col);
-            item->setTextAlignment(Qt::AlignCenter);  // 设置居中对齐
+            item->setTextAlignment(Qt::AlignCenter);  // Setting Center Alignment
         }
     }
 
@@ -442,15 +442,15 @@ void Widget::on_checkBoxVE_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.VE->setName("VE");// 设置曲线名陈
-        m_Series.VE->setColor(QColor(128, 200, 110));//设置曲线颜色
-        pChart->addSeries(m_Series.VE);// 数据写入图表
-        m_Series.VE->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.VE->attachAxis(pDataAxis);// 设置曲线Y轴
+        m_Series.VE->setName("VE");// Setting the curve name Chen
+        m_Series.VE->setColor(QColor(128, 200, 110));//Setting the curve color
+        pChart->addSeries(m_Series.VE);// Data writing to charts
+        m_Series.VE->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.VE->attachAxis(pDataAxis);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.VE);//删除曲线
+        pChart->removeSeries(m_Series.VE);//Delete Curve
     }
 }
 
@@ -459,15 +459,15 @@ void Widget::on_checkBoxO2C_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.O2C->setName("O2C");// 设置曲线名陈
-        m_Series.O2C->setColor(Qt::red);//设置曲线颜色
-        pChart->addSeries(m_Series.O2C);// 数据写入图表
-        m_Series.O2C->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.O2C->attachAxis(pDataAxis1);// 设置曲线Y轴
+        m_Series.O2C->setName("O2C");// Setting the curve name Chen
+        m_Series.O2C->setColor(Qt::red);//Setting the curve color
+        pChart->addSeries(m_Series.O2C);// Data writing to charts
+        m_Series.O2C->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.O2C->attachAxis(pDataAxis1);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.O2C);//删除曲线
+        pChart->removeSeries(m_Series.O2C);//Delete Curve
     }
 }
 
@@ -476,15 +476,15 @@ void Widget::on_checkBoxCO2C_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.CO2C->setName("CO2C");// 设置曲线名陈
-        m_Series.CO2C->setColor(Qt::blue);//设置曲线颜色
-        pChart->addSeries(m_Series.CO2C);// 数据写入图表
-        m_Series.CO2C->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.CO2C->attachAxis(pDataAxis1);// 设置曲线Y轴
+        m_Series.CO2C->setName("CO2C");// Setting the curve name Chen
+        m_Series.CO2C->setColor(Qt::blue);//Setting the curve color
+        pChart->addSeries(m_Series.CO2C);// Data writing to charts
+        m_Series.CO2C->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.CO2C->attachAxis(pDataAxis1);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.CO2C);//删除曲线
+        pChart->removeSeries(m_Series.CO2C);//Delete Curve
     }
 }
 
@@ -493,15 +493,15 @@ void Widget::on_checkBoxGF_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.GF->setName("GF");// 设置曲线名陈
-        m_Series.GF->setColor(Qt::green);//设置曲线颜色
-        pChart->addSeries(m_Series.GF);// 数据写入图表
-        m_Series.GF->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.GF->attachAxis(pDataAxis);// 设置曲线Y轴
+        m_Series.GF->setName("GF");// Setting the curve name Chen
+        m_Series.GF->setColor(Qt::green);// Setting the curve color
+        pChart->addSeries(m_Series.GF);// Data writing to charts
+        m_Series.GF->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.GF->attachAxis(pDataAxis);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.GF);//删除曲线
+        pChart->removeSeries(m_Series.GF);//Delete Curve
     }
 }
 
@@ -510,15 +510,15 @@ void Widget::on_checkBoxVO2_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.VO2->setName("VO2");// 设置曲线名陈
-        m_Series.VO2->setColor(Qt::magenta);//设置曲线颜色
-        pChart->addSeries(m_Series.VO2);// 数据写入图表
-        m_Series.VO2->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.VO2->attachAxis(pDataAxis);// 设置曲线Y轴
+        m_Series.VO2->setName("VO2");// Setting the curve name Chen
+        m_Series.VO2->setColor(Qt::magenta);//Setting the curve color
+        pChart->addSeries(m_Series.VO2);// Data writing to charts
+        m_Series.VO2->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.VO2->attachAxis(pDataAxis);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.VO2);//删除曲线
+        pChart->removeSeries(m_Series.VO2);//Delete Curve
     }
 }
 
@@ -527,15 +527,15 @@ void Widget::on_checkBoxVCO2_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.VCO2->setName("VCO2");// 设置曲线名陈
-        m_Series.VCO2->setColor(QColor(128, 0, 128));//设置曲线颜色
-        pChart->addSeries(m_Series.VCO2);// 数据写入图表
-        m_Series.VCO2->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.VCO2->attachAxis(pDataAxis);// 设置曲线Y轴
+        m_Series.VCO2->setName("VCO2");// Setting the curve name Chen
+        m_Series.VCO2->setColor(QColor(128, 0, 128));//Setting the curve color
+        pChart->addSeries(m_Series.VCO2);// Data writing to charts
+        m_Series.VCO2->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.VCO2->attachAxis(pDataAxis);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.VCO2);//删除曲线
+        pChart->removeSeries(m_Series.VCO2);//Delete Curve
     }
 }
 
@@ -544,15 +544,15 @@ void Widget::on_checkBoxRER_clicked(bool checked)
 {
     if(checked == true)
     {
-        m_Series.RER->setName("RER");// 设置曲线名陈
-        m_Series.RER->setColor(Qt::yellow);//设置曲线颜色
-        pChart->addSeries(m_Series.RER);// 数据写入图表
-        m_Series.RER->attachAxis(pTimeAxis);// 设置曲线X轴
-        m_Series.RER->attachAxis(pDataAxis);// 设置曲线Y轴
+        m_Series.RER->setName("RER");// Setting the curve name Chen
+        m_Series.RER->setColor(Qt::yellow);//Setting the curve color
+        pChart->addSeries(m_Series.RER);// Data writing to charts
+        m_Series.RER->attachAxis(pTimeAxis);// Setting the curve X-axis
+        m_Series.RER->attachAxis(pDataAxis);// Setting the curve Y-axis
     }
     else
     {
-        pChart->removeSeries(m_Series.RER);//删除曲线
+        pChart->removeSeries(m_Series.RER);//Delete Curve
     }
 }
 
@@ -575,25 +575,25 @@ void Widget::on_horizontalSliderX_valueChanged(int value)
        return;
    mXCount = value;
    ui->lineEditX->setText(QString::number(mXCount));
-   if(mTime > mXCount) // 动态更新横坐标范围
+   if(mTime > mXCount) // Dynamically update the horizontal coordinate range
    {
-       pTimeAxis->setRange( mStartTime.addSecs(mTime - mXCount),  mStartTime.addSecs(mTime)); // 只显示最近的个数据点
+       pTimeAxis->setRange( mStartTime.addSecs(mTime - mXCount),  mStartTime.addSecs(mTime)); // Only the most recent data point is displayed
    }
    else
    {
-       pTimeAxis->setRange( mStartTime.addSecs(0),  mStartTime.addSecs(mXCount)); // 只显示最近的个数据点
+       pTimeAxis->setRange( mStartTime.addSecs(0),  mStartTime.addSecs(mXCount)); // Only the most recent data point is displayed
    }
 }
 
 // Adjust left Y-axis range
 void Widget::on_verticalSliderYL_valueChanged(int value)
 {
-    pDataAxis->setRange(0, value); // 设置范围
+    pDataAxis->setRange(0, value); // Setting range
 }
 
 // Adjust right Y-axis range
 void Widget::on_verticalSliderYR_valueChanged(int value)
 {
-    pDataAxis1->setRange(0, value); // 设置范围
+    pDataAxis1->setRange(0, value); // Setting range
 }
 
