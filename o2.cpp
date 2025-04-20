@@ -116,7 +116,7 @@ void O2::sendSerialPortData(void)
     if(pSerialPort != nullptr)
     {
     //  qDebug()<<"sendSerialPortData:"<<QByteArray::fromHex(QString("FF018600000000007900").toUtf8());
-        pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));//读取气体浓度值
+        pSerialPort->write(QByteArray::fromHex(QString("FF018600000000007900").toUtf8()));//Read gas concentration values
         pSerialPort->flush();
     }
 }
