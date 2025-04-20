@@ -108,7 +108,7 @@ bool SFM3300::initSFM3300(void)
 
     QThread::msleep(100);
 
-    if (resetSFM3300() == false){// 复位
+    if (resetSFM3300() == false){// reset
         qDebug() << "resetSFM3300 failed";
         return false;
     }
@@ -148,7 +148,7 @@ bool SFM3300::readSFM3300(float *sfmGetVal)
 
     // Read flow data from sensor
     if (read(SFM3300ID , sfmVal ,3) == -1){
-        //qDebug() << "获取气体流量失败";
+        //qDebug() << "Failed to get gas flow";
         return false;
     }
     else{
@@ -159,8 +159,8 @@ bool SFM3300::readSFM3300(float *sfmGetVal)
 
     // Convert raw data to flow value
     sfmGetValTemp = (sfmVal[0]<<8 | sfmVal[1]);
-    sfmGetValTemp = (sfmGetValTemp - SFM3300_OFFSET) / 1.0 / SFM3300_FLOWCOEFF; // 计算数据，根据公式 （（测试量 - 偏移量）/ 流量系数）//// (raw - offset) / coefficient
+    sfmGetValTemp = (sfmGetValTemp - SFM3300_OFFSET) / 1.0 / SFM3300_FLOWCOEFF; // Calculated data，According to the formula （（test volume - shift）/ flow coefficient）//// (raw - offset) / coefficient
     *sfmGetVal = static_cast<float>(sfmGetValTemp);
-    //qDebug() << "气体流量=" << *sfmGetVal;
+    //qDebug() << "gas flow=" << *sfmGetVal;
     return true;
 }
