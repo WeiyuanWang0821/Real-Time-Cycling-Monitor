@@ -83,6 +83,39 @@ We provide a `.zip` file which contains all the Qt source files. Download and un
 
 ---
 
-*(后续我可以帮你补充：运行截图、演示视频链接、I²C 连接示意图、附加脚本等)*
+## 🖥️ User Interface & Usage Guide
 
+Below is a screenshot of the real-time Qt interface running on Raspberry Pi:
+
+![160d7a60719dbdf3553f368d3cecc29](https://github.com/user-attachments/assets/8d671009-a8da-4e40-9ab3-937bc7b98b62)
+
+
+### 👣 How to Use
+
+1. **Set basic information**: Input your weight, age, and sex, then click `SET`.
+2. Wait for a few seconds for the system to initialize and start sampling.
+3. **Select curves** on the left (O₂, CO₂, flow, VO₂...) to visualize in real time.
+4. The lower table will dynamically update calculated values, including **VO₂**, **VCO₂**, **VE**, **RER**, and **VO₂MAX**.
+
+This marks the start of your **VO₂MAX monitoring** during real-time exercise testing.
+
+---
+
+## 💸 Sensor Cost & Limitations
+
+- Excluding the Raspberry Pi, the total hardware cost (3 sensors) is **around £200**.
+- Due to budget constraints, the **CO₂ sensor** used in this project is an **electrochemical model**, which:
+  - Has low precision
+  - Responds slowly (theoretical delay ~60 seconds)
+  - Is **not suitable** for real-time exercise CO₂ tracking
+
+However, **CO₂ is not required for VO₂MAX calculation**, only for **VCO₂-related metrics** like RER.
+
+⚠️ In future versions, we plan to upgrade to a better CO₂ sensor.  
+Feel free to try replacing it if you're interested in exploring improved accuracy.
+
+---
+
+📹 For a detailed video walkthrough, see:  
+▶️ [https://www.tiktok.com/@lidashan/video/7495379013582556438](https://www.tiktok.com/@lidashan/video/7495379013582556438)
 
