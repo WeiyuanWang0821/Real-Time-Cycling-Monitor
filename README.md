@@ -2,14 +2,13 @@
 
 Commercial physiological monitoring systems for exercise testing are often **expensive, complex, or inaccessible for student research and DIY sports science**. In particular, **portable real-time VO₂ monitoring** is rare and typically requires proprietary equipment.
 
-🧠 **My Vélo Mate** addresses this gap by providing a **low-cost, Raspberry Pi-based solution** capable of tracking:
+🧠 **My Vélo Mate** addresses this gap by providing a **low-cost, Raspberry Pi 5-based solution** capable of tracking:
 - O₂ and CO₂ concentration
 - Respiratory flow
 - VO₂, VCO₂, RER, VE, and VO₂MAX in real-time
 
 It combines **multithreaded Qt architecture**, **event-driven callbacks**, and **modular sensor integration** to create a fully functional, extensible monitoring system.
 
-<img src="assets/rpi.jpg" width="200" align="right" />
 
 **Key use cases include**:
 - Lab-based aerobic capacity testing (VO₂MAX)
