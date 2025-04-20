@@ -7,16 +7,18 @@
 
 ## 🧰 Hardware Setup
 
-This project integrates **three sensors**, all connected to the Raspberry Pi via I²C/GPIO interface:
+This project integrates **three sensors**, all connected to the Raspberry Pi via I²C interface:
 
 | Sensor        | Model       | Description                                  | Manufacturer             |
 |---------------|-------------|----------------------------------------------|--------------------------|
-| O₂ Sensor     | 4MZ-HH | Measures oxygen concentration (%)         | *e.g., Winsen ZE25-O2*   |
-| CO₂ Sensor    | **Sensirion SCD4x** | Compact digital CO₂ and temperature sensor | [Sensirion SCD4x Datasheet](https://www.sensirion.com/en/environmental-sensors/gas-sensors/carbon-dioxide-sensors-co2/scd4x/) |
+| O₂ Sensor     | **4MZ-HH**  | Measures oxygen concentration (%)         | 河南华深科智能科技有限公司  |
+| CO₂ Sensor    | **Sensirion SCD4x** | Measures CO₂ concentration (%)| [Sensirion SCD4x Datasheet](https://www.sensirion.com/en/environmental-sensors/gas-sensors/carbon-dioxide-sensors-co2/scd4x/) |
 | Flow Sensor   | **Sensirion SFM3300** | Measures respiratory gas flow in L/min     | [Sensirion SFM3300 Datasheet](https://www.sensirion.com/en/flow-sensors/flow-sensors-for-gas/sfm3300/)
 
 > All sensors communicate over the Raspberry Pi’s I²C bus.
 
+> 🛠️ You’ll also need a **breathing mask with a one-way valve** to ensure proper gas flow measurement.  
+> Since no suitable commercial product was available, **we designed and DIYed a custom mask** for this project.
 ---
 
 ## 🚀 How to Reproduce This Project
