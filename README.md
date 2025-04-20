@@ -1,6 +1,25 @@
 # 🚴 My Vélo Mate – Real-Time Cycling Monitor
 
-**My Vélo Mate** is a real-time physiological monitoring system built on Raspberry Pi 5 using Qt. It continuously tracks O₂ concentration, CO₂ levels, and respiratory flow during cycling. Featuring multithreaded architecture and event-driven callbacks, it supports live charting, metric calculations (VO₂, VCO₂, RER, VE), and dynamic table updates in an intuitive UI.
+# 🚴 My Vélo Mate – Real-Time Cycling Monitor
+
+Commercial physiological monitoring systems for exercise testing are often **expensive, complex, or inaccessible for student research and DIY sports science**. In particular, **portable real-time VO₂ monitoring** is rare and typically requires proprietary equipment.
+
+🧠 **My Vélo Mate** addresses this gap by providing a **low-cost, Raspberry Pi-based solution** capable of tracking:
+- O₂ and CO₂ concentration
+- Respiratory flow
+- VO₂, VCO₂, RER, VE, and VO₂MAX in real-time
+
+It combines **multithreaded Qt architecture**, **event-driven callbacks**, and **modular sensor integration** to create a fully functional, extensible monitoring system.
+
+<img src="assets/rpi.jpg" width="200" align="right" />
+
+**Key use cases include**:
+- Lab-based aerobic capacity testing (VO₂MAX)
+- DIY fitness and cycling experiments
+- Academic/engineering teaching demonstrations
+
+This project brings powerful physiological monitoring capabilities to **students, makers, and sports engineers**, with a fully open-source implementation.
+
 ![b2c25b8988cba07ec1ac36a61ceb0e3](https://github.com/user-attachments/assets/2457a850-d32a-4dd5-8b57-11033a4bb3f3)
 
 ![13248066fea9438e98f577409426173](https://github.com/user-attachments/assets/6e222c5f-bf83-4a59-8609-6934fb53f88c)
